@@ -1,25 +1,21 @@
+# app designed to track personal workouts throughout 2022
+
+# load packages
 library(shiny)
 library(shinythemes)
 library(readxl)
 library(dplyr)
 library(ggplot2)
 
-
+# read data
 lifts <- read_excel("workout22.xlsx", sheet = "lifts")
+work <- read_excel("workout22.xlsx", sheet = "workouts")
+
+# calculate max values for each lift for every day I do them
 lift_temp <- lifts %>% 
   group_by(Date, Exercise) %>% 
   filter(Weight == max(Weight))
 
-dates <- as.Date(lifts$Date)
-date_range <- seq(min(dates), max(dates), by = 1)
-non_lift_days <- date_range[!date_range %in% dates]
-non_lift_count <- length(non_lift_days)
-lift_count <- length(date_range) - non_lift_count
-lift_count_df <- data.frame(lift = c("Non-lift Day", "Lift Day"),
-                            count = c(non_lift_count, lift_count))
-
-lift_count_df$lift <- factor(c("Non-lift Day", "Lift Day"),
-                             levels = c("Non-lift Day", "Lift Day"))
 
 # Define UI
 ui <- fluidPage(theme = shinytheme("cerulean"),
@@ -72,12 +68,9 @@ server <- function(input, output) {
   })
   
   output$liftcountplot <- renderPlot({
-    lift_count_df %>% 
-      ggplot(., aes(x = lift, count, fill = as.factor(count))) +
-      geom_bar(stat = "identity") + 
-      xlab("") + 
-      ylab("Number of Days") + 
-      theme(legend.position = "none")
+    work %>% 
+      ggplot(., aes(x = Workout)) +
+      geom_bar()
     
   })
 }
