@@ -1,5 +1,9 @@
 library(shiny)
 library(shinythemes)
+library(readxl)
+library(dplyr)
+library(ggplot2)
+
 
 lifts <- read_excel("workout22.xlsx", sheet = "lifts")
 lift_temp <- lifts %>% 
